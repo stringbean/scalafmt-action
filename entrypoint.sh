@@ -89,7 +89,7 @@ git --no-pager branch -r
 echo '--- remote branches ---'
 
 echo '--- and again ----'
-# /usr/bin/git branch -u origin/
+/usr/bin/git branch -u origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
 
 export
 
