@@ -69,4 +69,8 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
 fi
 
 cd "$GITHUB_WORKSPACE"
+# TODO debug
+pwd
+ls
+# end debug
 $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
