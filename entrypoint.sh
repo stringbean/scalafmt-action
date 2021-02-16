@@ -81,11 +81,11 @@ cd "$GITHUB_WORKSPACE"
 # pwd
 # /bin/ls -a
 echo '--- branches? ---'
-/usr/bin/git --no-pager branch 
+git --no-pager branch 
 echo '--- branches ---'
 
-echo '--- remote branches? ---'
-/usr/bin/git --no-pager branch -r 
+echo '--- remote branches2? ---'
+git --no-pager branch -r 
 echo '--- remote branches ---'
 
 echo '--- and again ----'
