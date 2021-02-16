@@ -34,7 +34,10 @@ while true ; do
         shift 2
         ;;
     -b)
-        # COMPARE_BRANCH="--diff-branch $2"
+        branch=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
+        if [ ! -z "$branch" ] then
+            COMPARE_BRANCH="--diff-branch $branch"
+        fi
         shift 2
         ;;
     -g)
