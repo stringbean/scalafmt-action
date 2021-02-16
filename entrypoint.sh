@@ -74,7 +74,7 @@ pwd
 /bin/ls -a
 /usr/bin/git branch
 
-cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
+/bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
 
 echo
 echo "  ref:      $GITHUB_REF"
