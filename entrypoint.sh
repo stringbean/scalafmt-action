@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 
 if [ -z "$GITHUB_WORKSPACE" ] ; then
     echo "Missing GITHUB_WORKSPACE - ensure that source is checked out"
@@ -71,7 +71,7 @@ fi
 cd "$GITHUB_WORKSPACE"
 # TODO debug
 pwd
-/bin/ls
+/bin/ls -a
 /usr/bin/git branch
 echo
 echo "  ref:      $GITHUB_REF"
@@ -80,3 +80,5 @@ echo "  head ref: $GITHUB_HEAD_REF"
 
 # end debug
 $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
+
+echo "successful fmt? $?"
