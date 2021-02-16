@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 
 if [ -z "$GITHUB_WORKSPACE" ] ; then
     echo "Missing GITHUB_WORKSPACE - ensure that source is checked out"
@@ -38,7 +38,11 @@ while true ; do
         shift 2
         ;;
     -g)
-        if [ "$2" == 'true' ] ; then
+        echo "git fu? $2"
+        opt=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
+
+        if [ "$opt" == 'true' ] ; then
+        echo "gitter"
             USE_GITIGNORE="--git true"
         fi
         shift 2
@@ -74,7 +78,7 @@ pwd
 /bin/ls -a
 /usr/bin/git branch
 
-/bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
+# /bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
 
 echo
 echo "  ref:      $GITHUB_REF"
@@ -82,9 +86,10 @@ echo "  base ref: $GITHUB_BASE_REF"
 echo "  head ref: $GITHUB_HEAD_REF"
 echo
 echo "RUNNING $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH"
-
+echo "-------"
 
 # end debug
+
 $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
 
 echo "successful fmt? $?"
