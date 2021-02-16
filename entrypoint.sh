@@ -34,7 +34,7 @@ while true ; do
         shift 2
         ;;
     -b)
-        COMPARE_BRANCH="--diff-branch $2"
+        # COMPARE_BRANCH="--diff-branch $2"
         shift 2
         ;;
     -g)
