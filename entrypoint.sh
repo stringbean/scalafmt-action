@@ -19,7 +19,7 @@ PATH=""
 while true ; do
     case "$1" in
     -v)
-        version=$(echo $2 | sed -e 's/^ *//g' -e 's/ *$//g')
+        version=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
         if [ "$version" != "$DEFAULT_VERSION" ] && [ "$version" != 'latest' ] ; then
             SCALAFMT_VERSION="$version"
         fi
