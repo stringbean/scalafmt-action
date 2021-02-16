@@ -1,13 +1,15 @@
 #!/bin/sh -ex
 
-SHORT_OPTS=v:f:b:g:p:
+if [ -z "$GITHUB_WORKSPACE" ] ; then
+    echo "Missing GITHUB_WORKSPACE - ensure that source is checked out"
+    exit 1
+fi
 
-DEFAULT_VERSION=$(/bin/scalafmt --version | /usr/bin/cut -d' ' -f2)
-
+SHORT_OPTS=v:f:b:g:p:` `
 OPTS=$(getopt --options $SHORT_OPTS --name "$0" -- "$@")
-
 eval set -- "$OPTS"
 
+DEFAULT_VERSION=$(/bin/scalafmt --version | /usr/bin/cut -d' ' -f2)
 SCALAFMT=/bin/scalafmt
 
 SCALAFMT_VERSION="latest"
@@ -66,4 +68,5 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     /bin/chmod +x "$SCALAFMT"
 fi
 
+cd "$GITHUB_WORKSPACE"
 $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
