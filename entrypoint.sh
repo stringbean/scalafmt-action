@@ -119,7 +119,7 @@ RESULT=$?
 if [ $RESULT -ne 0 ] ; then
     # dump errors
     while read -r filename ; do
-        echo ":error file=$filename::Incorrectly formatted file"
+        echo "::error file=$filename::Incorrectly formatted file"
     done < failures.txt
 fi
 
