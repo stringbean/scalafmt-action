@@ -80,7 +80,9 @@ cd "$GITHUB_WORKSPACE"
 # TODO debug
 # pwd
 # /bin/ls -a
-# /usr/bin/git branch
+echo '--- branches? ---'
+/usr/bin/git branch
+echo '--- branches ---'
 
 # /bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
 
