@@ -1,4 +1,4 @@
-#!/bin/sh -o pipefail
+#!/bin/bash -o pipefail
 
 if [ -z "$GITHUB_WORKSPACE" ] ; then
     echo "Missing GITHUB_WORKSPACE - ensure that source is checked out"
@@ -75,7 +75,6 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
 fi
 
 echo "switching to $GITHUB_WORKSPACE"
-/usr/bin/file "$GITHUB_WORKSPACE/src"
 cd "$GITHUB_WORKSPACE"
 # TODO debug
 # pwd
