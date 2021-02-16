@@ -84,8 +84,8 @@ echo '--- branches? ---'
 git --no-pager branch 
 echo '--- branches ---'
 
-echo '--- remote branches2? ---'
-git --no-pager branch -r 
+echo '--- remote branches3? ---'
+git --no-pager branch -a
 echo '--- remote branches ---'
 
 echo '--- and again ----'
