@@ -42,8 +42,7 @@ while true ; do
         opt=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
 
         if [ "$opt" == 'true' ] ; then
-        echo "gitter"
-            # USE_GITIGNORE="--git true"
+            USE_GITIGNORE="--git true"
         fi
         shift 2
         ;;
