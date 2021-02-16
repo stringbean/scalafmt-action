@@ -109,12 +109,20 @@ echo "-------"
 
 # end debug
 
-$SCALAFMT --non-interactive --debug $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH 2> stderr.log > stdout.log
+$SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt
 
-echo "successful fmt? $?"
+RESULT=$?
 
-echo "---- stdout ----"
-cat stdout.log
+if [ $RESULT -ne 0 ] ; then
+    # dump errors
+    echo "::error ::files failed"
+fi
 
-echo "---- stderr ----"
-cat stderr.log
+exit $RESULT
+# echo "successful fmt? $?"
+
+# echo "---- stdout ----"
+# cat stdout.log
+
+# echo "---- stderr ----"
+# cat stderr.log
