@@ -11,8 +11,8 @@ SHORT_OPTS=v:f:b:g:p:` `
 OPTS=$(getopt --options $SHORT_OPTS --name "$0" -- "$@")
 eval set -- "$OPTS"
 
-DEFAULT_VERSION=$(/bin/scalafmt --version | /usr/bin/cut -d' ' -f2)
-SCALAFMT=/bin/scalafmt
+DEFAULT_VERSION=$(scalafmt --version | cut -d' ' -f2)
+SCALAFMT=scalafmt
 
 SCALAFMT_VERSION="latest"
 ACTION="--list"
@@ -23,7 +23,7 @@ SOURCE_PATH=""
 while true ; do
     case "$1" in
     -v)
-        version=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
+        version=$(echo $2 | sed -e 's/^ *//g' -e 's/ *$//g')
         if [ "$version" != "$DEFAULT_VERSION" ] && [ "$version" != 'latest' ] ; then
             SCALAFMT_VERSION="$version"
         fi
@@ -72,49 +72,13 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     echo "Fetching scalafmt $SCALAFMT_VERSION..."
     SCALAFMT="/scalafmt-$SCALAFMT_VERSION"
 
-    PATH=/usr/bin wget "https://github.com/scalameta/scalafmt/releases/download/v${SCALAFMT_VERSION}/scalafmt-linux-musl" -O "$SCALAFMT"
-    /bin/chmod +x "$SCALAFMT"
+    wget "https://github.com/scalameta/scalafmt/releases/download/v${SCALAFMT_VERSION}/scalafmt-linux-musl" -O "$SCALAFMT"
+    chmod +x "$SCALAFMT"
 fi
-
-echo "switching to $GITHUB_WORKSPACE"
-cd "$GITHUB_WORKSPACE"
-# TODO debug
-# pwd
-# /bin/ls -a
-echo '--- branches? ---'
-git --no-pager branch 
-echo '--- branches ---'
-
-echo '--- remote branches3? ---'
-git --no-pager branch -a
-echo '--- remote branches ---'
-
-echo '--- and again 2 ----'
-# /usr/bin/git branch -u origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
-git branch --track $GITHUB_BASE_REF origin/$GITHUB_BASE_REF 
-git --no-pager branch -a
-echo '--- ----'
-
-export
-
-# /bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
-
-echo
-echo "  ref:      $GITHUB_REF"
-echo "  base ref: $GITHUB_BASE_REF"
-echo "  head ref: $GITHUB_HEAD_REF"
-echo "  source path: $SOURCE_PATH"
-echo
-echo "RUNNING $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt"
-echo "-------"
-
-# end debug
 
 $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt
 
 RESULT=$?
-
-
 
 if [ $RESULT -ne 0 ] ; then
     # dump errors
@@ -123,20 +87,4 @@ if [ $RESULT -ne 0 ] ; then
     done < failures.txt
 fi
 
-# echo "RESULT? $RESULT"
-
-# echo "::warning file=app.js,line=1,col=5::Missing semicolon"
-# echo "::error file=src/main/scala/foo.scala,line=10,col=15::Something went wrong"
-# echo "::error ::This should be an error"
-# echo "::error file=::This should be an error 2"
-# echo "::error file=dummy::This should be an error 3"
-
-
 exit $RESULT
-# echo "successful fmt? $?"
-
-# echo "---- stdout ----"
-# cat stdout.log
-
-# echo "---- stderr ----"
-# cat stderr.log
