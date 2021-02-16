@@ -1,4 +1,6 @@
-#!/bin/bash -o pipefail
+#!/bin/bash
+
+set -o pipefail
 
 if [ -z "$GITHUB_WORKSPACE" ] ; then
     echo "Missing GITHUB_WORKSPACE - ensure that source is checked out"
