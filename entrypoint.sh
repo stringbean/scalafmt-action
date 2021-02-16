@@ -99,8 +99,9 @@ echo
 echo "  ref:      $GITHUB_REF"
 echo "  base ref: $GITHUB_BASE_REF"
 echo "  head ref: $GITHUB_HEAD_REF"
+echo "  source path: $SOURCE_PATH"
 echo
-echo "RUNNING $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH"
+echo "RUNNING $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH"
 echo "-------"
 
 # end debug
