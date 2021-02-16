@@ -36,7 +36,7 @@ while true ; do
         shift 2
         ;;
     -b)
-        branch=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
+        branch=$(echo $2 | sed -e 's/^ *//g' -e 's/ *$//g')
         if [ ! -z "$branch" ] ; then
             COMPARE_BRANCH="--diff-branch $branch"
         fi
@@ -44,7 +44,7 @@ while true ; do
         ;;
     -g)
         echo "git fu? $2"
-        opt=$(echo $2 | /bin/sed -e 's/^ *//g' -e 's/ *$//g')
+        opt=$(echo $2 | sed -e 's/^ *//g' -e 's/ *$//g')
 
         if [ "$opt" == 'true' ] ; then
             USE_GITIGNORE="--git true"
@@ -75,6 +75,8 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     wget "https://github.com/scalameta/scalafmt/releases/download/v${SCALAFMT_VERSION}/scalafmt-linux-musl" -O "$SCALAFMT"
     chmod +x "$SCALAFMT"
 fi
+
+cd "$GITHUB_WORKSPACE"
 
 $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt
 
