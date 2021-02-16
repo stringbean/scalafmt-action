@@ -114,18 +114,22 @@ $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH 
 
 RESULT=$?
 
+
+
 if [ $RESULT -ne 0 ] ; then
     # dump errors
-    echo "::error ::files failed"
+    while read -r filename ; do
+        echo ":error file=$filename::Incorrectly formatted file"
+    done < failures.txt
 fi
 
-echo "RESULT? $RESULT"
+# echo "RESULT? $RESULT"
 
-echo "::warning file=app.js,line=1,col=5::Missing semicolon"
-echo "::error file=src/main/scala/foo.scala,line=10,col=15::Something went wrong"
-echo "::error ::This should be an error"
-echo "::error file=::This should be an error 2"
-echo "::error file=dummy::This should be an error 3"
+# echo "::warning file=app.js,line=1,col=5::Missing semicolon"
+# echo "::error file=src/main/scala/foo.scala,line=10,col=15::Something went wrong"
+# echo "::error ::This should be an error"
+# echo "::error file=::This should be an error 2"
+# echo "::error file=dummy::This should be an error 3"
 
 
 exit $RESULT
