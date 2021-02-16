@@ -68,7 +68,7 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     /bin/chmod +x "$SCALAFMT"
 fi
 
-cd "$GITHUB_WORKSPACE"
+pushd "$GITHUB_WORKSPACE"
 # TODO debug
 pwd
 /bin/ls -a
