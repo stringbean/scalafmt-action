@@ -121,6 +121,10 @@ fi
 
 echo "RESULT? $RESULT"
 
+echo "::warning file=app.js,line=1,col=5::Missing semicolon"
+echo "::error file=src/main/scala/foo.scala,line=10,col=15::Something went wrong"
+
+
 exit $RESULT
 # echo "successful fmt? $?"
 
