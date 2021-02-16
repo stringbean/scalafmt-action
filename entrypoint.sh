@@ -73,7 +73,7 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
 fi
 
 echo "switching to $GITHUB_WORKSPACE"
-/usr/bin/file "$GITHUB_WORKSPACE"
+/usr/bin/file "$GITHUB_WORKSPACE/src"
 cd "$GITHUB_WORKSPACE"
 # TODO debug
 # pwd
