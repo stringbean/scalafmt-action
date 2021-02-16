@@ -10,7 +10,7 @@ eval set -- "$OPTS"
 
 SCALAFMT=/bin/scalafmt
 
-SCALAFMT_VERSION="default"
+SCALAFMT_VERSION="latest"
 ACTION="--list"
 USE_GITIGNORE=""
 COMPARE_BRANCH=""
@@ -55,7 +55,9 @@ while true ; do
     esac
 done
 
-if [ "$SCALAFMT_VERSION" != 'default' ] ; then
+echo "Will run using scalafmt: $SCALAFMT_VERSION"
+
+if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     echo "Fetching scalafmt $SCALAFMT_VERSION..."
     SCALAFMT="scalafmt-$SCALAFMT_VERSION"
 
