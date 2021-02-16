@@ -16,7 +16,7 @@ SCALAFMT_VERSION="latest"
 ACTION="--list"
 USE_GITIGNORE=""
 COMPARE_BRANCH=""
-PATH=""
+SOURCE_PATH=""
 
 while true ; do
     case "$1" in
@@ -50,7 +50,7 @@ while true ; do
         shift 2
         ;;
     -p)
-        PATH="$2"
+        SOURCE_PATH="$2"
         shift 2
         ;;
     --)
@@ -105,6 +105,6 @@ echo "-------"
 
 # end debug
 
-$SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
+$SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH
 
 echo "successful fmt? $?"
