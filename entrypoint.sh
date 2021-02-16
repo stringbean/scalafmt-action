@@ -88,6 +88,11 @@ echo '--- remote branches? ---'
 /usr/bin/git --no-pager branch -r 
 echo '--- remote branches ---'
 
+echo '--- and again ----'
+# /usr/bin/git branch -u origin/
+
+export
+
 # /bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
 
 echo
