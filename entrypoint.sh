@@ -39,11 +39,11 @@ while true ; do
         branch=$(echo $2 | sed -e 's/^ *//g' -e 's/ *$//g')
         if [ ! -z "$branch" ] ; then
             COMPARE_BRANCH="--diff-branch $branch"
+            git branch --track $branch origin/$branch
         fi
         shift 2
         ;;
     -g)
-        echo "git fu? $2"
         opt=$(echo $2 | sed -e 's/^ *//g' -e 's/ *$//g')
 
         if [ "$opt" == 'true' ] ; then
