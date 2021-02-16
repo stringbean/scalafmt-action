@@ -89,7 +89,8 @@ git --no-pager branch -r
 echo '--- remote branches ---'
 
 echo '--- and again ----'
-/usr/bin/git branch -u origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
+# /usr/bin/git branch -u origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
+git branch --set-upstream-to=origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
 git --no-pager branch 
 echo '--- ----'
 
