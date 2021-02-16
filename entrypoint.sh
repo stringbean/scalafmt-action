@@ -88,10 +88,10 @@ echo '--- remote branches3? ---'
 git --no-pager branch -a
 echo '--- remote branches ---'
 
-echo '--- and again ----'
+echo '--- and again 2 ----'
 # /usr/bin/git branch -u origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
-git branch --set-upstream-to=origin/$GITHUB_BASE_REF $GITHUB_BASE_REF
-git --no-pager branch 
+git branch --track $GITHUB_BASE_REF origin/$GITHUB_BASE_REF 
+git --no-pager branch -a
 echo '--- ----'
 
 export
