@@ -104,7 +104,7 @@ echo "  base ref: $GITHUB_BASE_REF"
 echo "  head ref: $GITHUB_HEAD_REF"
 echo "  source path: $SOURCE_PATH"
 echo
-echo "RUNNING $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH"
+echo "RUNNING $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt"
 echo "-------"
 
 # end debug
@@ -117,6 +117,8 @@ if [ $RESULT -ne 0 ] ; then
     # dump errors
     echo "::error ::files failed"
 fi
+
+echo "RESULT? $RESULT"
 
 exit $RESULT
 # echo "successful fmt? $?"
