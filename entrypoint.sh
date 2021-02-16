@@ -66,7 +66,7 @@ echo "Will run using scalafmt: $SCALAFMT_VERSION"
 
 if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     echo "Fetching scalafmt $SCALAFMT_VERSION..."
-    SCALAFMT="scalafmt-$SCALAFMT_VERSION"
+    SCALAFMT="/scalafmt-$SCALAFMT_VERSION"
 
     PATH=/usr/bin wget "https://github.com/scalameta/scalafmt/releases/download/v${SCALAFMT_VERSION}/scalafmt-linux-musl" -O "$SCALAFMT"
     /bin/chmod +x "$SCALAFMT"
@@ -74,9 +74,9 @@ fi
 
 cd "$GITHUB_WORKSPACE"
 # TODO debug
-pwd
-/bin/ls -a
-/usr/bin/git branch
+# pwd
+# /bin/ls -a
+# /usr/bin/git branch
 
 # /bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
 
