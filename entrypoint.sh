@@ -72,6 +72,8 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     /bin/chmod +x "$SCALAFMT"
 fi
 
+echo "switching to $GITHUB_WORKSPACE"
+/usr/bin/file "$GITHUB_WORKSPACE"
 cd "$GITHUB_WORKSPACE"
 # TODO debug
 # pwd
