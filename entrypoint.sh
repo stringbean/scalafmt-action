@@ -68,17 +68,22 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     /bin/chmod +x "$SCALAFMT"
 fi
 
-pushd "$GITHUB_WORKSPACE"
+cd "$GITHUB_WORKSPACE"
 # TODO debug
 pwd
 /bin/ls -a
 /usr/bin/git branch
+
+/usr/bin/find $PATH -name '*.scala'
+
 echo
 echo "  ref:      $GITHUB_REF"
 echo "  base ref: $GITHUB_BASE_REF"
 echo "  head ref: $GITHUB_HEAD_REF"
 echo
 echo "RUNNING $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH"
+
+
 # end debug
 $SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
 
