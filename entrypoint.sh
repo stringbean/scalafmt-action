@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 
 SHORT_OPTS=v:f:b:g:p:
 
