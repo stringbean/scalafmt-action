@@ -79,6 +79,6 @@ echo "  base ref: $GITHUB_BASE_REF"
 echo "  head ref: $GITHUB_HEAD_REF"
 
 # end debug
-$SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
+$SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $PATH
 
 echo "successful fmt? $?"
