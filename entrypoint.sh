@@ -109,6 +109,12 @@ echo "-------"
 
 # end debug
 
-$SCALAFMT --non-interactive --debug --no-stderr $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH
+$SCALAFMT --non-interactive --debug $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH 2> stderr.log > stdout.log
 
 echo "successful fmt? $?"
+
+echo "---- stdout ----"
+cat stdout.log
+
+echo "---- stderr ----"
+cat stderr.log
