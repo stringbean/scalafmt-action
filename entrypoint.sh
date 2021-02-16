@@ -1,8 +1,5 @@
 #!/bin/sh -e
 
-echo "PATH? $PATH"
-export PATH="$PATH:/usr/bin"
-
 SHORT_OPTS=v:f:b:g:p:
 
 DEFAULT_VERSION=$(/bin/scalafmt --version | /usr/bin/cut -d' ' -f2)
@@ -22,7 +19,7 @@ PATH=""
 while true ; do
     case "$1" in
     -v)
-        if [ "$2" != "$DEFAULT_VERSION" ] ; then
+        if [ "$2" != "$DEFAULT_VERSION" ] && [ "$2" != 'latest' ] ; then
             SCALAFMT_VERSION="$2"
         fi
         shift 2
