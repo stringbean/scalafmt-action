@@ -1,0 +1,34 @@
+name: Scalafmt
+description: Format Scala source files with Scalafmt
+
+branding:
+  color: red
+  icon: check-square
+
+inputs:
+  version:
+    description: Version of scalafmt to use
+    default: latest
+  format-files:
+    description: If true then scalafmt will reformat source files instead of checking
+    default: false
+  compare-branch:
+    description: Branch to compare against to filter only changed files
+    default: ''
+  use-gitignore:
+    description: If true then the .gitignore file will be used to filter sources
+    default: true
+  
+  path:
+    description: Path(s) to scan
+    default: .
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - "-v ${{ inputs.version }}"
+    - "-f ${{ inputs.format-files }}"
+    - "-b ${{ inputs.compare-branch }}"
+    - "-g ${{ inputs.use-gitignore }}"
+    - "-p ${{ inputs.path }}"
