@@ -123,6 +123,9 @@ echo "RESULT? $RESULT"
 
 echo "::warning file=app.js,line=1,col=5::Missing semicolon"
 echo "::error file=src/main/scala/foo.scala,line=10,col=15::Something went wrong"
+echo "::error ::This should be an error"
+echo "::error file=::This should be an error 2"
+echo "::error file=dummy::This should be an error 3"
 
 
 exit $RESULT
