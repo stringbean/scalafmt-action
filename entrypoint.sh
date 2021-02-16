@@ -81,8 +81,12 @@ cd "$GITHUB_WORKSPACE"
 # pwd
 # /bin/ls -a
 echo '--- branches? ---'
-/usr/bin/git branch
+/usr/bin/git branch --no-pager
 echo '--- branches ---'
+
+echo '--- remote branches? ---'
+/usr/bin/git branch -r --no-pager
+echo '--- remote branches ---'
 
 # /bin/cat $(/usr/bin/find $PATH -name '*.scala' | /usr/bin/head)
 
