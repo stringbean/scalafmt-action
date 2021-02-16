@@ -43,7 +43,7 @@ while true ; do
 
         if [ "$opt" == 'true' ] ; then
         echo "gitter"
-            USE_GITIGNORE="--git true"
+            # USE_GITIGNORE="--git true"
         fi
         shift 2
         ;;
