@@ -81,7 +81,7 @@ chmod +x /scalafmt-report
 
 cd "$GITHUB_WORKSPACE"
 
-$SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt
+$SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH 2> failures.txt
 
 RESULT=$?
 
