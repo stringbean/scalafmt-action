@@ -87,6 +87,7 @@ RESULT=$?
 
 if [ $RESULT -ne 0 ] ; then
     # dump errors
+    ls -lh failures.txt
     /scalafmt-report failures.txt "$GITHUB_WORKSPACE"
 fi
 
