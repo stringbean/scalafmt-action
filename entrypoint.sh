@@ -76,6 +76,9 @@ if [ "$SCALAFMT_VERSION" != 'latest' ] ; then
     chmod +x "$SCALAFMT"
 fi
 
+wget "https://github.com/stringbean/scalafmt-report/releases/download/v0.1.15/scalafmt-report-linux-musl" -O /scalafmt-report
+chmod +x /scalafmt-report
+
 cd "$GITHUB_WORKSPACE"
 
 $SCALAFMT --non-interactive $ACTION $USE_GITIGNORE $COMPARE_BRANCH $SOURCE_PATH | tee failures.txt
@@ -84,9 +87,7 @@ RESULT=$?
 
 if [ $RESULT -ne 0 ] ; then
     # dump errors
-    while read -r filename ; do
-        echo "::error file=$filename::Incorrectly formatted file"
-    done < failures.txt
+    /scalafmt-report failures.txt "$GITHUB_WORKSPACE"
 fi
 
 exit $RESULT
