@@ -15,7 +15,7 @@ DEFAULT_VERSION=$(scalafmt --version | cut -d' ' -f2)
 SCALAFMT=scalafmt
 
 SCALAFMT_VERSION="latest"
-ACTION="--diff"
+ACTION="--test"
 USE_GITIGNORE=""
 COMPARE_BRANCH=""
 SOURCE_PATH=""
