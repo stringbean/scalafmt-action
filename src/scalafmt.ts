@@ -48,6 +48,9 @@ export default class Scalafmt {
     return new Promise((resolve, reject) => {
       console.debug('Running scalafmt', args.join(' '));
       exec(args.join(' '), (error, stdout, stderr) => {
+        console.log('STDOUT', stdout);
+        console.error('STDERR', stderr);
+
         if (!error) {
           // no format errors
           resolve([]);
