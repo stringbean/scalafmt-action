@@ -9,30 +9,23 @@ inputs:
   version:
     description: Version of scalafmt to use
     default: latest
+    required: false
   format-files:
     description: If true then scalafmt will reformat source files instead of checking
-    default: false
+    default: 'false'
+    required: false
   compare-branch:
     description: Branch to compare against to filter only changed files
-    default: ''
+    required: false
   use-gitignore:
     description: If true then the .gitignore file will be used to filter sources
-    default: true
+    default: 'true'
+    required: false
   path:
     description: Path(s) to scan
     default: .
+    required: false
 
 runs:
-  using: docker
-  image: Dockerfile
-  args:
-    - -v
-    - ${{ inputs.version }}
-    - -f
-    - ${{ inputs.format-files }}
-    - -b
-    - "${{ inputs.compare-branch }}"
-    - -g
-    - ${{ inputs.use-gitignore }}
-    - -p
-    - "${{ inputs.path }}"
+  using: node12
+  main: dist/index.js

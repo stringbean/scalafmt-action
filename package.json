@@ -1,0 +1,21 @@
+{
+  "name": "scalafmt-action",
+  "version": "2.0.0-alpha",
+  "description": "GitHub Action for checking Scala source files are correctly formatted using scalafmt",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "package": "ncc build --source-map --license licenses.txt"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@tsconfig/node12": "^1.0.7",
+    "@types/node": "^14.14.35",
+    "@vercel/ncc": "^0.27.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
+  }
+}
