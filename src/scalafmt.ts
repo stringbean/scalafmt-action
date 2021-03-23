@@ -61,6 +61,7 @@ export default class Scalafmt {
 
   fetchScalafmt(): Promise<string> {
     const filename = path.join(homedir(), `scalafmt-${this.version}`);
+    console.log('will store scalafmt at', filename);
 
     return new Promise((resolve, reject) => {
       const dest = fs.createWriteStream(filename);
