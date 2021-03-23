@@ -69,7 +69,7 @@ export default class Scalafmt {
 
     // TODO musl?
     const response = await fetch(
-      `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-glibc`,
+      `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`,
     );
 
     if (response.status != 200) {
