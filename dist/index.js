@@ -520,7 +520,7 @@ class Scalafmt {
         return new Promise((resolve, reject) => {
             const dest = fs_1.default.createWriteStream(filename);
             // TODO musl?
-            const request = https_1.default.get(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
+            const request = https_1.default.get(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-glibc`);
             request.on('response', (response) => {
                 response.pipe(dest);
             });

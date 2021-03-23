@@ -70,7 +70,7 @@ export default class Scalafmt {
 
       // TODO musl?
       const request = https.get(
-        `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`,
+        `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-glibc`,
       );
 
       request.on('response', (response) => {
