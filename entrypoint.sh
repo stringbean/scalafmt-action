@@ -8,7 +8,7 @@ if [ -z "$GITHUB_WORKSPACE" ] ; then
 fi
 
 SCALAFMT_VERSION="latest"
-SCALAFMT_REPORT_VERSION="1.1.0-alpha"
+SCALAFMT_REPORT_VERSION="1.1.0-alpha.3"
 
 SHORT_OPTS=v:f:b:g:p:` `
 OPTS=$(getopt --options $SHORT_OPTS --name "$0" -- "$@")
@@ -80,6 +80,8 @@ fi
 
 wget "https://github.com/stringbean/scalafmt-report/releases/download/v${SCALAFMT_REPORT_VERSION}/scalafmt-report-linux-musl" -O /scalafmt-report
 chmod +x /scalafmt-report
+
+ls -l /scalafmt-report
 
 cd "$GITHUB_WORKSPACE"
 
