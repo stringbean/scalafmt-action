@@ -467,32 +467,15 @@ run().catch((error) => {
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const https = __importStar(__nccwpck_require__(211));
-const fs = __importStar(__nccwpck_require__(747));
+const https_1 = __importDefault(__nccwpck_require__(211));
+const fs_1 = __importDefault(__nccwpck_require__(747));
+const path_1 = __importDefault(__nccwpck_require__(622));
 const child_process_1 = __nccwpck_require__(129);
+const os_1 = __nccwpck_require__(87);
 const ScalafmtError_1 = __importDefault(__nccwpck_require__(0));
 const FROM_FILE_PATTERN = /^--- (.*)$/;
 const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
@@ -531,21 +514,21 @@ class Scalafmt {
         });
     }
     fetchScalafmt() {
-        const filename = `/scalafmt-${this.version}`;
+        const filename = path_1.default.join(os_1.homedir(), `scalafmt-${this.version}`);
         return new Promise((resolve, reject) => {
-            const dest = fs.createWriteStream(filename);
+            const dest = fs_1.default.createWriteStream(filename);
             // TODO musl?
-            const request = https.get(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
+            const request = https_1.default.get(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
             request.on('response', (response) => {
                 response.pipe(dest);
             });
             request.on('error', (error) => {
                 dest.close();
-                fs.unlink(filename, () => { });
+                fs_1.default.unlink(filename, () => { });
                 reject(error);
             });
             dest.on('finish', () => {
-                fs.chmodSync(filename, 0x755);
+                fs_1.default.chmodSync(filename, 0x755);
                 resolve(filename);
             });
         });
