@@ -60,6 +60,7 @@ export default class Scalafmt {
   }
 
   fetchScalafmt(): Promise<string> {
+    console.log('home? ', homedir());
     const filename = path.join(homedir(), `scalafmt-${this.version}`);
     console.log('will store scalafmt at', filename);
 
