@@ -8,7 +8,7 @@ if [ -z "$GITHUB_WORKSPACE" ] ; then
 fi
 
 SCALAFMT_VERSION="latest"
-SCALAFMT_REPORT_VERSION="1.0.0"
+SCALAFMT_REPORT_VERSION="1.1.0-alpha"
 
 SHORT_OPTS=v:f:b:g:p:` `
 OPTS=$(getopt --options $SHORT_OPTS --name "$0" -- "$@")
