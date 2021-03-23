@@ -1,7 +1,10 @@
 import * as https from 'https';
 import * as fs from 'fs';
 import { exec } from 'child_process';
+import { homedir } from 'os';
+
 import ScalafmtError from './ScalafmtError';
+import path from 'node:path';
 
 const FROM_FILE_PATTERN = /^--- (.*)$/;
 const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
@@ -57,7 +60,7 @@ export default class Scalafmt {
   }
 
   fetchScalafmt(): Promise<string> {
-    const filename = `/scalafmt-${this.version}`;
+    const filename = path.join(homedir(), `scalafmt-${this.version}`);
 
     return new Promise((resolve, reject) => {
       const dest = fs.createWriteStream(filename);
