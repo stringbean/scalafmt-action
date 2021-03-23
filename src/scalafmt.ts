@@ -5,6 +5,8 @@ import { exec } from 'child_process';
 import { homedir } from 'os';
 
 import ScalafmtError from './ScalafmtError';
+import { SingleBar } from 'cli-progress';
+import fetch from 'node-fetch';
 
 const FROM_FILE_PATTERN = /^--- (.*)$/;
 const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
@@ -62,22 +64,35 @@ export default class Scalafmt {
     });
   }
 
-  fetchScalafmt(): Promise<string> {
+  async fetchScalafmt(): Promise<string> {
     const filename = path.join(homedir(), `scalafmt-${this.version}`);
 
-    return new Promise((resolve, reject) => {
-      const dest = fs.createWriteStream(filename);
+    // TODO musl?
+    const response = await fetch(
+      `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-glibc`,
+    );
 
-      // TODO musl?
-      const request = https.get(
-        `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-glibc`,
+    if (response.status != 200) {
+      throw new Error('Failed to download scalafmt');
+    }
+
+    return new Promise((resolve, reject) => {
+      const progress = new SingleBar({});
+
+      progress.start(
+        Number.parseInt(response.headers.get('content-length') || '-1'),
+        0,
       );
 
-      request.on('response', (response) => {
-        response.pipe(dest);
+      const dest = fs.createWriteStream(filename);
+
+      response.body.on('data', (chunk) => {
+        progress.increment(chunk.length);
       });
 
-      request.on('error', (error) => {
+      response.body.pipe(dest);
+
+      response.body.on('error', (error) => {
         dest.close();
         fs.unlink(filename, () => {});
         reject(error);
@@ -85,6 +100,7 @@ export default class Scalafmt {
 
       dest.on('finish', () => {
         fs.chmodSync(filename, 0x755);
+        progress.stop();
         resolve(filename);
       });
     });
