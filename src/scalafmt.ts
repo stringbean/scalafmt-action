@@ -31,7 +31,7 @@ export default class Scalafmt {
       this.binPath = await this.fetchScalafmt();
     }
 
-    const args = [this.binPath, '--non-interactive'];
+    const args = [this.binPath, '--non-interactive', '--debug'];
 
     if (!reformat) {
       args.push('--test');
