@@ -67,7 +67,6 @@ export default class Scalafmt {
   async fetchScalafmt(): Promise<string> {
     const filename = path.join(homedir(), `scalafmt-${this.version}`);
 
-    // TODO musl?
     const response = await fetch(
       `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`,
     );

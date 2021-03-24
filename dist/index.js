@@ -4401,7 +4401,6 @@ class Scalafmt {
     }
     async fetchScalafmt() {
         const filename = path_1.default.join(os_1.homedir(), `scalafmt-${this.version}`);
-        // TODO musl?
         const response = await node_fetch_1.default(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
         if (response.status != 200) {
             throw new Error('Failed to download scalafmt');
