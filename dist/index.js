@@ -4386,7 +4386,8 @@ class Scalafmt {
         args.push(path);
         return new Promise((resolve, reject) => {
             console.debug('Running scalafmt', args.join(' '));
-            const opts = { cwd: process_1.env.$GITHUB_WORKSPACE };
+            console.debug('  working dir', process_1.env.GITHUB_WORKSPACE);
+            const opts = { cwd: process_1.env.GITHUB_WORKSPACE };
             child_process_1.exec(args.join(' '), opts, (error, stdout, stderr) => {
                 console.log('STDOUT', stdout);
                 console.error('STDERR', stderr);

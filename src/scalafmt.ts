@@ -49,7 +49,8 @@ export default class Scalafmt {
 
     return new Promise((resolve, reject) => {
       console.debug('Running scalafmt', args.join(' '));
-      const opts = { cwd: env.$GITHUB_WORKSPACE };
+      console.debug('  working dir', env.GITHUB_WORKSPACE);
+      const opts = { cwd: env.GITHUB_WORKSPACE };
 
       exec(args.join(' '), opts, (error, stdout, stderr) => {
         console.log('STDOUT', stdout);
