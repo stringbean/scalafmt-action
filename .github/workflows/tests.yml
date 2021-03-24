@@ -17,6 +17,7 @@ jobs:
         run: |
           git remote set-branches origin diff-branch "${{steps.branch-name.outputs.current_branch}}"
           git fetch --depth 1
+          git fetch origin diff-branch:diff-branch
           git checkout "${{steps.branch-name.outputs.current_branch}}"
       - uses: ./
         with:
