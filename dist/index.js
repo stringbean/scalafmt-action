@@ -4368,7 +4368,7 @@ class Scalafmt {
     constructor(version) {
         this.version = version;
     }
-    async run(path, useGitignore, reformat, branch) {
+    async run(srcPath, useGitignore, reformat, branch) {
         if (!this.binPath) {
             console.log(`Fetching scalafmt ${this.version}`);
             this.binPath = await this.fetchScalafmt();
@@ -4383,11 +4383,12 @@ class Scalafmt {
         if (branch) {
             args.push('--diff-branch', branch);
         }
-        args.push(path);
+        const opts = {
+            cwd: path_1.default.join(process_1.env.GITHUB_WORKSPACE || process.cwd(), srcPath),
+        };
         return new Promise((resolve, reject) => {
             console.debug('Running scalafmt', args.join(' '));
-            console.debug('  working dir', process_1.env.GITHUB_WORKSPACE);
-            const opts = { cwd: process_1.env.GITHUB_WORKSPACE };
+            console.debug('  working dir', opts.cwd);
             child_process_1.exec(args.join(' '), opts, (error, stdout, stderr) => {
                 console.log('STDOUT', stdout);
                 console.error('STDERR', stderr);

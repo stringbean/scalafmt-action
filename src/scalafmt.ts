@@ -20,7 +20,7 @@ export default class Scalafmt {
   }
 
   async run(
-    path: string,
+    srcPath: string,
     useGitignore: boolean,
     reformat: boolean,
     branch?: string,
@@ -45,12 +45,13 @@ export default class Scalafmt {
       args.push('--diff-branch', branch);
     }
 
-    args.push(path);
+    const opts = {
+      cwd: path.join(env.GITHUB_WORKSPACE || process.cwd(), srcPath),
+    };
 
     return new Promise((resolve, reject) => {
       console.debug('Running scalafmt', args.join(' '));
-      console.debug('  working dir', env.GITHUB_WORKSPACE);
-      const opts = { cwd: env.GITHUB_WORKSPACE };
+      console.debug('  working dir', opts.cwd);
 
       exec(args.join(' '), opts, (error, stdout, stderr) => {
         console.log('STDOUT', stdout);
