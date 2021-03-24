@@ -14,9 +14,11 @@ const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
 export default class Scalafmt {
   private readonly version: string;
   private binPath?: string;
+  private readonly workdir: string;
 
   constructor(version: string) {
     this.version = version;
+    this.workdir = env.GITHUB_WORKSPACE || process.cwd();
   }
 
   async run(
@@ -46,7 +48,7 @@ export default class Scalafmt {
     }
 
     const opts = {
-      cwd: path.join(env.GITHUB_WORKSPACE || process.cwd(), srcPath),
+      cwd: path.join(this.workdir, srcPath),
     };
 
     return new Promise((resolve, reject) => {
@@ -62,7 +64,7 @@ export default class Scalafmt {
           resolve([]);
         } else {
           // parse errors from stderr
-          resolve(Scalafmt.parseErrors(stderr));
+          resolve(this.parseErrors(stderr));
         }
       });
     });
@@ -109,7 +111,7 @@ export default class Scalafmt {
     });
   }
 
-  private static parseErrors(diff: string): ScalafmtError[] {
+  private parseErrors(diff: string): ScalafmtError[] {
     const errors: ScalafmtError[] = [];
 
     diff.split('\n').forEach((line) => {
@@ -117,7 +119,7 @@ export default class Scalafmt {
       const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
 
       if (filenameMatch) {
-        const filename = filenameMatch[1];
+        const filename = path.relative(this.workdir, filenameMatch[1]);
 
         errors.push(new ScalafmtError(filename));
       } else if (changeMatch) {

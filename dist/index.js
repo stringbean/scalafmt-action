@@ -4367,6 +4367,7 @@ const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
 class Scalafmt {
     constructor(version) {
         this.version = version;
+        this.workdir = process_1.env.GITHUB_WORKSPACE || process.cwd();
     }
     async run(srcPath, useGitignore, reformat, branch) {
         if (!this.binPath) {
@@ -4384,7 +4385,7 @@ class Scalafmt {
             args.push('--diff-branch', branch);
         }
         const opts = {
-            cwd: path_1.default.join(process_1.env.GITHUB_WORKSPACE || process.cwd(), srcPath),
+            cwd: path_1.default.join(this.workdir, srcPath),
         };
         return new Promise((resolve, reject) => {
             console.debug('Running scalafmt', args.join(' '));
@@ -4398,7 +4399,7 @@ class Scalafmt {
                 }
                 else {
                     // parse errors from stderr
-                    resolve(Scalafmt.parseErrors(stderr));
+                    resolve(this.parseErrors(stderr));
                 }
             });
         });
@@ -4429,13 +4430,13 @@ class Scalafmt {
             });
         });
     }
-    static parseErrors(diff) {
+    parseErrors(diff) {
         const errors = [];
         diff.split('\n').forEach((line) => {
             const filenameMatch = line.match(FROM_FILE_PATTERN);
             const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
             if (filenameMatch) {
-                const filename = filenameMatch[1];
+                const filename = path_1.default.relative(this.workdir, filenameMatch[1]);
                 errors.push(new ScalafmtError_1.default(filename));
             }
             else if (changeMatch) {
