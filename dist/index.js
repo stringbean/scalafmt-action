@@ -4358,6 +4358,7 @@ const fs_1 = __importDefault(__nccwpck_require__(5747));
 const path_1 = __importDefault(__nccwpck_require__(5622));
 const child_process_1 = __nccwpck_require__(3129);
 const os_1 = __nccwpck_require__(2087);
+const process_1 = __nccwpck_require__(1765);
 const ScalafmtError_1 = __importDefault(__nccwpck_require__(0));
 const cli_progress_1 = __nccwpck_require__(7348);
 const node_fetch_1 = __importDefault(__nccwpck_require__(467));
@@ -4385,7 +4386,8 @@ class Scalafmt {
         args.push(path);
         return new Promise((resolve, reject) => {
             console.debug('Running scalafmt', args.join(' '));
-            child_process_1.exec(args.join(' '), (error, stdout, stderr) => {
+            const opts = { cwd: process_1.env.$GITHUB_WORKSPACE };
+            child_process_1.exec(args.join(' '), opts, (error, stdout, stderr) => {
                 console.log('STDOUT', stdout);
                 console.error('STDERR', stderr);
                 if (!error) {
@@ -4511,6 +4513,14 @@ module.exports = require("os");;
 
 "use strict";
 module.exports = require("path");;
+
+/***/ }),
+
+/***/ 1765:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("process");;
 
 /***/ }),
 

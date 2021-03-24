@@ -1,8 +1,8 @@
-import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 import { homedir } from 'os';
+import { env } from 'process';
 
 import ScalafmtError from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
@@ -49,7 +49,9 @@ export default class Scalafmt {
 
     return new Promise((resolve, reject) => {
       console.debug('Running scalafmt', args.join(' '));
-      exec(args.join(' '), (error, stdout, stderr) => {
+      const opts = { cwd: env.$GITHUB_WORKSPACE };
+
+      exec(args.join(' '), opts, (error, stdout, stderr) => {
         console.log('STDOUT', stdout);
         console.error('STDERR', stderr);
 
