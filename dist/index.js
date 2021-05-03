@@ -1,5 +1,4 @@
-require('./sourcemap-register.js');module.exports =
-/******/ (() => { // webpackBootstrap
+require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 7351:
@@ -198,6 +197,7 @@ exports.getInput = getInput;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
+    process.stdout.write(os.EOL);
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;
@@ -4272,202 +4272,11 @@ module.exports = string => typeof string === 'string' ? string.replace(ansiRegex
 
 /***/ }),
 
-/***/ 0:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-class ScalafmtError {
-    constructor(filename, failures = []) {
-        this.filename = filename;
-        this.failures = failures;
-    }
-    withLine(line) {
-        return new ScalafmtError(this.filename, [...this.failures, line]);
-    }
-}
-exports.default = ScalafmtError;
-
-
-/***/ }),
-
-/***/ 6144:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(2186));
-const scalafmt_1 = __importDefault(__nccwpck_require__(9702));
-async function run() {
-    const scalafmtVersion = core.getInput('version');
-    const formatFiles = core.getInput('format-files') === 'true';
-    const compareBranch = core.getInput('compare-branch');
-    const useGitignore = core.getInput('use-gitignore') === 'true';
-    const path = core.getInput('path');
-    const scalafmt = new scalafmt_1.default(scalafmtVersion);
-    const results = await scalafmt.run(path, useGitignore, formatFiles, compareBranch);
-    results
-        .sort((a, b) => a.filename.localeCompare(b.filename))
-        .forEach((group) => {
-        group.failures.forEach((line) => {
-            core.error(`file=${group.filename},line=${line}::Incorrectly formatted line(s)`);
-        });
-    });
-}
-run().catch((error) => {
-    core.setFailed(error);
-});
-
-
-/***/ }),
-
-/***/ 9702:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const fs_1 = __importDefault(__nccwpck_require__(5747));
-const path_1 = __importDefault(__nccwpck_require__(5622));
-const child_process_1 = __nccwpck_require__(3129);
-const os_1 = __nccwpck_require__(2087);
-const process_1 = __nccwpck_require__(1765);
-const ScalafmtError_1 = __importDefault(__nccwpck_require__(0));
-const cli_progress_1 = __nccwpck_require__(7348);
-const node_fetch_1 = __importDefault(__nccwpck_require__(467));
-const FROM_FILE_PATTERN = /^--- (.*)$/;
-const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
-class Scalafmt {
-    constructor(version) {
-        this.version = version;
-        this.workdir = process_1.env.GITHUB_WORKSPACE || process.cwd();
-    }
-    async run(srcPath, useGitignore, reformat, branch) {
-        if (!this.binPath) {
-            console.log(`Fetching scalafmt ${this.version}`);
-            this.binPath = await this.fetchScalafmt();
-        }
-        const args = [this.binPath, '--non-interactive', '--debug'];
-        if (!reformat) {
-            args.push('--test');
-        }
-        if (useGitignore) {
-            args.push('--git', 'true');
-        }
-        if (branch) {
-            args.push('--diff-branch', branch);
-        }
-        const opts = {
-            cwd: path_1.default.join(this.workdir, srcPath),
-        };
-        return new Promise((resolve, reject) => {
-            console.debug('Running scalafmt', args.join(' '));
-            console.debug('  working dir', opts.cwd);
-            child_process_1.exec(args.join(' '), opts, (error, stdout, stderr) => {
-                console.log('STDOUT', stdout);
-                console.error('STDERR', stderr);
-                if (!error) {
-                    // no format errors
-                    resolve([]);
-                }
-                else {
-                    // parse errors from stderr
-                    resolve(this.parseErrors(stderr));
-                }
-            });
-        });
-    }
-    async fetchScalafmt() {
-        const filename = path_1.default.join(os_1.homedir(), `scalafmt-${this.version}`);
-        const response = await node_fetch_1.default(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
-        if (response.status != 200) {
-            throw new Error('Failed to download scalafmt');
-        }
-        return new Promise((resolve, reject) => {
-            const progress = new cli_progress_1.SingleBar({});
-            progress.start(Number.parseInt(response.headers.get('content-length') || '-1'), 0);
-            const dest = fs_1.default.createWriteStream(filename);
-            response.body.on('data', (chunk) => {
-                progress.increment(chunk.length);
-            });
-            response.body.pipe(dest);
-            response.body.on('error', (error) => {
-                dest.close();
-                fs_1.default.unlink(filename, () => { });
-                reject(error);
-            });
-            dest.on('finish', () => {
-                fs_1.default.chmodSync(filename, 0x755);
-                progress.stop();
-                resolve(filename);
-            });
-        });
-    }
-    parseErrors(diff) {
-        const errors = [];
-        diff.split('\n').forEach((line) => {
-            const filenameMatch = line.match(FROM_FILE_PATTERN);
-            const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
-            if (filenameMatch) {
-                const filename = path_1.default.relative(this.workdir, filenameMatch[1]);
-                errors.push(new ScalafmtError_1.default(filename));
-            }
-            else if (changeMatch) {
-                const startLine = changeMatch[1];
-                const currentFile = errors.pop();
-                if (currentFile) {
-                    errors.push(currentFile.withLine(Number.parseInt(startLine)));
-                }
-            }
-        });
-        return errors;
-    }
-}
-exports.default = Scalafmt;
-
-
-/***/ }),
-
 /***/ 2877:
 /***/ ((module) => {
 
 module.exports = eval("require")("encoding");
 
-
-/***/ }),
-
-/***/ 3129:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("child_process");;
 
 /***/ }),
 
@@ -4519,14 +4328,6 @@ module.exports = require("path");;
 
 /***/ }),
 
-/***/ 1765:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("process");;
-
-/***/ }),
-
 /***/ 1058:
 /***/ ((module) => {
 
@@ -4575,8 +4376,9 @@ module.exports = require("zlib");;
 /******/ 	// The require function
 /******/ 	function __nccwpck_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -4599,13 +4401,210 @@ module.exports = require("zlib");;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
-/******/ 	__nccwpck_require__.ab = __dirname + "/";/************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	return __nccwpck_require__(6144);
+/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+// ESM COMPAT FLAG
+__nccwpck_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(5747);
+var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(5622);
+var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
+;// CONCATENATED MODULE: external "child_process"
+const external_child_process_namespaceObject = require("child_process");;
+// EXTERNAL MODULE: external "os"
+var external_os_ = __nccwpck_require__(2087);
+;// CONCATENATED MODULE: external "process"
+const external_process_namespaceObject = require("process");;
+;// CONCATENATED MODULE: ./src/ScalafmtError.ts
+class ScalafmtError {
+    constructor(filename, failures = []) {
+        this.filename = filename;
+        this.failures = failures;
+    }
+    withLine(line) {
+        return new ScalafmtError(this.filename, [...this.failures, line]);
+    }
+}
+
+// EXTERNAL MODULE: ./node_modules/cli-progress/cli-progress.js
+var cli_progress = __nccwpck_require__(7348);
+// EXTERNAL MODULE: ./node_modules/node-fetch/lib/index.js
+var lib = __nccwpck_require__(467);
+var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
+;// CONCATENATED MODULE: ./src/scalafmt.ts
+
+
+
+
+
+
+
+
+const FROM_FILE_PATTERN = /^--- (.*)$/;
+const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
+class Scalafmt {
+    constructor(version) {
+        this.version = version;
+        this.workdir = external_process_namespaceObject.env.GITHUB_WORKSPACE || process.cwd();
+    }
+    async run(srcPath, useGitignore, reformat, branch) {
+        if (!this.binPath) {
+            console.log(`Fetching scalafmt ${this.version}`);
+            this.binPath = await this.fetchScalafmt();
+        }
+        const args = [this.binPath, '--non-interactive', '--debug'];
+        if (!reformat) {
+            args.push('--test');
+        }
+        if (useGitignore) {
+            args.push('--git', 'true');
+        }
+        if (branch) {
+            args.push('--diff-branch', branch);
+        }
+        const opts = {
+            cwd: external_path_default().join(this.workdir, srcPath),
+        };
+        return new Promise((resolve, reject) => {
+            console.debug('Running scalafmt', args.join(' '));
+            console.debug('  working dir', opts.cwd);
+            (0,external_child_process_namespaceObject.exec)(args.join(' '), opts, (error, stdout, stderr) => {
+                console.log('STDOUT', stdout);
+                console.error('STDERR', stderr);
+                if (!error) {
+                    // no format errors
+                    resolve([]);
+                }
+                else {
+                    // parse errors from stderr
+                    resolve(this.parseErrors(stderr));
+                }
+            });
+        });
+    }
+    async fetchScalafmt() {
+        const filename = external_path_default().join((0,external_os_.homedir)(), `scalafmt-${this.version}`);
+        const response = await lib_default()(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
+        if (response.status != 200) {
+            throw new Error('Failed to download scalafmt');
+        }
+        return new Promise((resolve, reject) => {
+            const progress = new cli_progress.SingleBar({});
+            progress.start(Number.parseInt(response.headers.get('content-length') || '-1'), 0);
+            const dest = external_fs_default().createWriteStream(filename);
+            response.body.on('data', (chunk) => {
+                progress.increment(chunk.length);
+            });
+            response.body.pipe(dest);
+            response.body.on('error', (error) => {
+                dest.close();
+                external_fs_default().unlink(filename, () => { });
+                reject(error);
+            });
+            dest.on('finish', () => {
+                external_fs_default().chmodSync(filename, 0x755);
+                progress.stop();
+                resolve(filename);
+            });
+        });
+    }
+    parseErrors(diff) {
+        const errors = [];
+        diff.split('\n').forEach((line) => {
+            const filenameMatch = line.match(FROM_FILE_PATTERN);
+            const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
+            if (filenameMatch) {
+                const filename = external_path_default().relative(this.workdir, filenameMatch[1]);
+                errors.push(new ScalafmtError(filename));
+            }
+            else if (changeMatch) {
+                const startLine = changeMatch[1];
+                const currentFile = errors.pop();
+                if (currentFile) {
+                    errors.push(currentFile.withLine(Number.parseInt(startLine)));
+                }
+            }
+        });
+        return errors;
+    }
+}
+
+;// CONCATENATED MODULE: ./src/index.ts
+
+
+async function run() {
+    const scalafmtVersion = core.getInput('version');
+    const formatFiles = core.getInput('format-files') === 'true';
+    const compareBranch = core.getInput('compare-branch');
+    const useGitignore = core.getInput('use-gitignore') === 'true';
+    const path = core.getInput('path');
+    const scalafmt = new Scalafmt(scalafmtVersion);
+    const results = await scalafmt.run(path, useGitignore, formatFiles, compareBranch);
+    results
+        .sort((a, b) => a.filename.localeCompare(b.filename))
+        .forEach((group) => {
+        group.failures.forEach((line) => {
+            core.error(`file=${group.filename},line=${line}::Incorrectly formatted line(s)`);
+        });
+    });
+}
+run().catch((error) => {
+    core.setFailed(error);
+});
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
