@@ -3,6 +3,7 @@ import path from 'path';
 import { exec } from 'child_process';
 import { homedir } from 'os';
 import { env } from 'process';
+import * as core from '@actions/core';
 
 import { ScalafmtError } from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
@@ -25,7 +26,7 @@ export default class Scalafmt {
     branch?: string,
   ): Promise<ScalafmtError[]> {
     if (!this.binPath) {
-      console.log(`Fetching scalafmt ${this.version}`);
+      core.info(`Fetching scalafmt ${this.version}`);
 
       this.binPath = await this.fetchScalafmt();
     }
@@ -49,20 +50,16 @@ export default class Scalafmt {
     };
 
     return new Promise((resolve) => {
-      console.debug('Running scalafmt', args.join(' '));
-      console.debug('  working dir', opts.cwd);
+      core.debug(`Running scalafmt: ${args.join(' ')}`);
 
       exec(args.join(' '), opts, (error, stdout, stderr) => {
-        console.log('STDOUT', stdout);
-        console.error('STDERR', stderr);
-
         if (!error) {
           // no format errors
-          console.log('Scalafmt passed!');
+          core.debug('Scalafmt passed');
           resolve([]);
         } else {
           // parse errors from stderr
-          console.log('Scalaformat failed');
+          core.debug('Scalafmt errors detected');
           resolve(ScalafmtError.parseErrors(stderr, this.workdir));
         }
       });
@@ -99,7 +96,7 @@ export default class Scalafmt {
       response.body.on('error', (error) => {
         dest.close();
         fs.unlink(filename, () => {
-          console.error('Could not removed temporary file');
+          core.warning('Failed to cleanup target file');
         });
         reject(error);
       });
