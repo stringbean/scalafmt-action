@@ -4599,6 +4599,9 @@ async function run() {
             core.error(`file=${group.filename},line=${line}::Incorrectly formatted line(s)`);
         });
     });
+    if (results) {
+        core.setFailed('One or more files are not correctly formatted');
+    }
 }
 run().catch((error) => {
     core.setFailed(error);

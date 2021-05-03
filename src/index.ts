@@ -25,6 +25,10 @@ async function run() {
         );
       });
     });
+
+  if (results) {
+    core.setFailed('One or more files are not correctly formatted');
+  }
 }
 
 run().catch((error) => {
