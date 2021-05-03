@@ -1,5 +1,4 @@
 import * as core from '@actions/core';
-import * as os from 'os';
 
 import Scalafmt from './scalafmt';
 import { ExitCode } from '@actions/core';
@@ -21,14 +20,7 @@ async function run() {
 
   results
     .sort((a, b) => a.filename.localeCompare(b.filename))
-    .forEach((error) => error.write(process.stdout));
-  // .forEach((group) => {
-  //   group.failures.forEach((line) => {
-  //     process.stdout.write(
-  //       `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
-  //     );
-  //   });
-  // });
+    .forEach((error) => process.stdout.write(error.toString()));
 
   if (results) {
     process.exitCode = ExitCode.Failure;

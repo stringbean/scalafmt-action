@@ -4,7 +4,7 @@ import { exec } from 'child_process';
 import { homedir } from 'os';
 import { env } from 'process';
 
-import ScalafmtError from './ScalafmtError';
+import { ScalafmtError } from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
 import fetch from 'node-fetch';
 
@@ -66,7 +66,7 @@ export default class Scalafmt {
         } else {
           // parse errors from stderr
           console.log('Scalaformat failed');
-          resolve(this.parseErrors(stderr));
+          resolve(ScalafmtError.parseErrors(stderr, this.workdir));
         }
       });
     });
@@ -111,37 +111,5 @@ export default class Scalafmt {
         resolve(filename);
       });
     });
-  }
-
-  private parseErrors(diff: string): ScalafmtError[] {
-    const errors: ScalafmtError[] = [];
-
-    diff.split('\n').forEach((line) => {
-      const filenameMatch = line.match(FROM_FILE_PATTERN);
-      const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
-
-      if (filenameMatch) {
-        const filename = path.relative(this.workdir, filenameMatch[1]);
-
-        errors.push(new ScalafmtError(filename));
-      } else if (changeMatch) {
-        const [, startLine, startColumn, endLine, endColumn] = changeMatch;
-
-        const currentFile = errors.pop();
-
-        if (currentFile) {
-          errors.push(
-            currentFile.withFailure(
-              Number.parseInt(startLine),
-              Number.parseInt(startColumn),
-              Number.parseInt(endLine),
-              Number.parseInt(endColumn),
-            ),
-          );
-        }
-      }
-    });
-
-    return errors;
   }
 }
