@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "package": "ncc build --source-map --license licenses.txt src/index.ts",
+    "prettier": "prettier --write .",
     "test": "jest"
   },
   "license": "Apache-2.0",
