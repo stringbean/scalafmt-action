@@ -4467,34 +4467,47 @@ var external_os_ = __nccwpck_require__(2087);
 const external_process_namespaceObject = require("process");;
 ;// CONCATENATED MODULE: ./src/ScalafmtError.ts
 
+
+const FROM_FILE_PATTERN = /^--- (.*)$/;
+const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
+const CHANGE_DELETION_PATTERN = /^- .*$/;
 class ScalafmtError {
-    constructor(filename, failures = []) {
+    constructor(filename, startLine, startColumn) {
+        this.lineCount = 0;
         this.filename = filename;
-        this.failures = failures;
-    }
-    withFailure(startLine, startColumn, endLine, endColumn) {
-        return new ScalafmtError(this.filename, [
-            ...this.failures,
-            new ScalafmtErrorBlock(startLine, startColumn, endLine, endColumn),
-        ]);
-    }
-    write(stream) {
-        this.failures.forEach((failure) => {
-            if (failure.startLine === failure.endLine) {
-                stream.write(`::error file=${this.filename},line=${failure.startLine},col=${failure.startColumn}::Incorrectly formatted line${external_os_.EOL}`);
-            }
-            else {
-                stream.write(`::error file=${this.filename},line=${failure.startLine},col=${failure.startColumn}::Incorrectly formatted lines${external_os_.EOL}`);
-            }
-        });
-    }
-}
-class ScalafmtErrorBlock {
-    constructor(startLine, startColumn, endLine, endColumn) {
         this.startLine = startLine;
         this.startColumn = startColumn;
-        this.endLine = endLine;
-        this.endColumn = endColumn;
+    }
+    incrementLineCount() {
+        this.lineCount++;
+    }
+    get endLine() {
+        return this.startLine + this.lineCount - 1;
+    }
+    static parseErrors(diff, workdir) {
+        const errors = [];
+        let currentFilename;
+        diff.split('\n').forEach((line) => {
+            const filenameMatch = line.match(FROM_FILE_PATTERN);
+            const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
+            const deletionMatch = line.match(CHANGE_DELETION_PATTERN);
+            if (filenameMatch) {
+                currentFilename = external_path_default().relative(workdir, filenameMatch[1]);
+            }
+            else if (changeMatch && currentFilename) {
+                const [, startLine, startColumn] = changeMatch;
+                errors.push(new ScalafmtError(currentFilename, Number.parseInt(startLine), Number.parseInt(startColumn)));
+            }
+            else if (deletionMatch && errors) {
+                const error = errors[errors.length - 1];
+                error.incrementLineCount();
+            }
+        });
+        return errors;
+    }
+    toString() {
+        const lineText = this.lineCount < 2 ? 'line' : 'lines';
+        return `::error file=${this.filename},line=${this.startLine},col=${this.startColumn}::Incorrectly formatted ${lineText}${external_os_.EOL}`;
     }
 }
 
@@ -4512,8 +4525,7 @@ var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
 
 
 
-const FROM_FILE_PATTERN = /^--- (.*)$/;
-const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
+
 class Scalafmt {
     constructor(version) {
         this.version = version;
@@ -4521,7 +4533,7 @@ class Scalafmt {
     }
     async run(srcPath, useGitignore, reformat, branch) {
         if (!this.binPath) {
-            console.log(`Fetching scalafmt ${this.version}`);
+            core.info(`Fetching scalafmt ${this.version}`);
             this.binPath = await this.fetchScalafmt();
         }
         const args = [this.binPath, '--non-interactive', '--debug'];
@@ -4537,21 +4549,18 @@ class Scalafmt {
         const opts = {
             cwd: external_path_default().join(this.workdir, srcPath),
         };
-        return new Promise((resolve, reject) => {
-            console.debug('Running scalafmt', args.join(' '));
-            console.debug('  working dir', opts.cwd);
+        return new Promise((resolve) => {
+            core.debug(`Running scalafmt: ${args.join(' ')}`);
             (0,external_child_process_namespaceObject.exec)(args.join(' '), opts, (error, stdout, stderr) => {
-                console.log('STDOUT', stdout);
-                console.error('STDERR', stderr);
                 if (!error) {
                     // no format errors
-                    console.log('Scalafmt passed!');
+                    core.debug('Scalafmt passed');
                     resolve([]);
                 }
                 else {
                     // parse errors from stderr
-                    console.log('Scalaformat failed');
-                    resolve(this.parseErrors(stderr));
+                    core.debug('Scalafmt errors detected');
+                    resolve(ScalafmtError.parseErrors(stderr, this.workdir));
                 }
             });
         });
@@ -4572,7 +4581,9 @@ class Scalafmt {
             response.body.pipe(dest);
             response.body.on('error', (error) => {
                 dest.close();
-                external_fs_default().unlink(filename, () => { });
+                external_fs_default().unlink(filename, () => {
+                    core.warning('Failed to cleanup target file');
+                });
                 reject(error);
             });
             dest.on('finish', () => {
@@ -4581,25 +4592,6 @@ class Scalafmt {
                 resolve(filename);
             });
         });
-    }
-    parseErrors(diff) {
-        const errors = [];
-        diff.split('\n').forEach((line) => {
-            const filenameMatch = line.match(FROM_FILE_PATTERN);
-            const changeMatch = line.match(CHANGE_BLOCK_PATTERN);
-            if (filenameMatch) {
-                const filename = external_path_default().relative(this.workdir, filenameMatch[1]);
-                errors.push(new ScalafmtError(filename));
-            }
-            else if (changeMatch) {
-                const [, startLine, startColumn, endLine, endColumn] = changeMatch;
-                const currentFile = errors.pop();
-                if (currentFile) {
-                    errors.push(currentFile.withFailure(Number.parseInt(startLine), Number.parseInt(startColumn), Number.parseInt(endLine), Number.parseInt(endColumn)));
-                }
-            }
-        });
-        return errors;
     }
 }
 
@@ -4617,14 +4609,7 @@ async function run() {
     const results = await scalafmt.run(path, useGitignore, formatFiles, compareBranch);
     results
         .sort((a, b) => a.filename.localeCompare(b.filename))
-        .forEach((error) => error.write(process.stdout));
-    // .forEach((group) => {
-    //   group.failures.forEach((line) => {
-    //     process.stdout.write(
-    //       `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
-    //     );
-    //   });
-    // });
+        .forEach((error) => process.stdout.write(error.toString()));
     if (results) {
         process.exitCode = core.ExitCode.Failure;
     }
