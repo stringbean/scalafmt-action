@@ -61,9 +61,11 @@ export default class Scalafmt {
 
         if (!error) {
           // no format errors
+          console.log('Scalafmt passed!');
           resolve([]);
         } else {
           // parse errors from stderr
+          console.log('Scalaformat failed');
           resolve(this.parseErrors(stderr));
         }
       });
