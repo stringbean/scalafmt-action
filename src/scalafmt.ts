@@ -8,9 +8,6 @@ import { ScalafmtError } from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
 import fetch from 'node-fetch';
 
-const FROM_FILE_PATTERN = /^--- (.*)$/;
-const CHANGE_BLOCK_PATTERN = /^@@ -([0-9]+),([0-9]+) \+([0-9]+),([0-9]+) @@$/;
-
 export default class Scalafmt {
   private readonly version: string;
   private binPath?: string;
@@ -51,7 +48,7 @@ export default class Scalafmt {
       cwd: path.join(this.workdir, srcPath),
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       console.debug('Running scalafmt', args.join(' '));
       console.debug('  working dir', opts.cwd);
 
@@ -101,7 +98,9 @@ export default class Scalafmt {
 
       response.body.on('error', (error) => {
         dest.close();
-        fs.unlink(filename, () => {});
+        fs.unlink(filename, () => {
+          console.error('Could not removed temporary file');
+        });
         reject(error);
       });
 

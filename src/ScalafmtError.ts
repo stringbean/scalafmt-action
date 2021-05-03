@@ -9,7 +9,7 @@ export class ScalafmtError {
   readonly filename: string;
   readonly startLine: number;
   readonly startColumn: number;
-  private lineCount: number = 0;
+  private lineCount = 0;
 
   constructor(filename: string, startLine: number, startColumn: number) {
     this.filename = filename;
