@@ -4453,8 +4453,6 @@ __nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
-// EXTERNAL MODULE: external "os"
-var external_os_ = __nccwpck_require__(2087);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(5747);
 var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
@@ -4463,16 +4461,40 @@ var external_path_ = __nccwpck_require__(5622);
 var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");;
+// EXTERNAL MODULE: external "os"
+var external_os_ = __nccwpck_require__(2087);
 ;// CONCATENATED MODULE: external "process"
 const external_process_namespaceObject = require("process");;
 ;// CONCATENATED MODULE: ./src/ScalafmtError.ts
+
 class ScalafmtError {
     constructor(filename, failures = []) {
         this.filename = filename;
         this.failures = failures;
     }
-    withLine(line) {
-        return new ScalafmtError(this.filename, [...this.failures, line]);
+    withFailure(startLine, startColumn, endLine, endColumn) {
+        return new ScalafmtError(this.filename, [
+            ...this.failures,
+            new ScalafmtErrorBlock(startLine, startColumn, endLine, endColumn),
+        ]);
+    }
+    write(stream) {
+        this.failures.forEach((failure) => {
+            if (failure.startLine === failure.endLine) {
+                stream.write(`::error file=${this.filename},line=${failure.startLine},col=${failure.startColumn}::Incorrectly formatted line${external_os_.EOL}`);
+            }
+            else {
+                stream.write(`::error file=${this.filename},line=${failure.startLine},col=${failure.startColumn}::Incorrectly formatted lines${external_os_.EOL}`);
+            }
+        });
+    }
+}
+class ScalafmtErrorBlock {
+    constructor(startLine, startColumn, endLine, endColumn) {
+        this.startLine = startLine;
+        this.startColumn = startColumn;
+        this.endLine = endLine;
+        this.endColumn = endColumn;
     }
 }
 
@@ -4570,10 +4592,10 @@ class Scalafmt {
                 errors.push(new ScalafmtError(filename));
             }
             else if (changeMatch) {
-                const startLine = changeMatch[1];
+                const [, startLine, startColumn, endLine, endColumn] = changeMatch;
                 const currentFile = errors.pop();
                 if (currentFile) {
-                    errors.push(currentFile.withLine(Number.parseInt(startLine)));
+                    errors.push(currentFile.withFailure(Number.parseInt(startLine), Number.parseInt(startColumn), Number.parseInt(endLine), Number.parseInt(endColumn)));
                 }
             }
         });
@@ -4595,18 +4617,17 @@ async function run() {
     const results = await scalafmt.run(path, useGitignore, formatFiles, compareBranch);
     results
         .sort((a, b) => a.filename.localeCompare(b.filename))
-        .forEach((group) => {
-        group.failures.forEach((line) => {
-            process.stdout.write(`::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${external_os_.EOL}`);
-            //
-            // core.error(
-            //   `file=${group.filename},line=${line}::Incorrectly formatted line(s)`,
-            // );
-        });
-    });
-    // if (results) {
-    //   core.setFailed('One or more files are not correctly formatted');
-    // }
+        .forEach((error) => error.write(process.stdout));
+    // .forEach((group) => {
+    //   group.failures.forEach((line) => {
+    //     process.stdout.write(
+    //       `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
+    //     );
+    //   });
+    // });
+    if (results) {
+        process.exitCode = core.ExitCode.Failure;
+    }
 }
 run().catch((error) => {
     core.setFailed(error);

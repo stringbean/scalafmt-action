@@ -1,8 +1,8 @@
 import * as core from '@actions/core';
-import * as os from 'os'
+import * as os from 'os';
 
 import Scalafmt from './scalafmt';
-import {ExitCode} from "@actions/core";
+import { ExitCode } from '@actions/core';
 
 async function run() {
   const scalafmtVersion: string = core.getInput('version');
@@ -21,16 +21,17 @@ async function run() {
 
   results
     .sort((a, b) => a.filename.localeCompare(b.filename))
-    .forEach((group) => {
-      group.failures.forEach((line) => {
-        process.stdout.write(
-          `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
-        );
-      });
-    });
+    .forEach((error) => error.write(process.stdout));
+  // .forEach((group) => {
+  //   group.failures.forEach((line) => {
+  //     process.stdout.write(
+  //       `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
+  //     );
+  //   });
+  // });
 
   if (results) {
-    process.exitCode = ExitCode.Failure
+    process.exitCode = ExitCode.Failure;
   }
 }
 

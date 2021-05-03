@@ -125,12 +125,19 @@ export default class Scalafmt {
 
         errors.push(new ScalafmtError(filename));
       } else if (changeMatch) {
-        const startLine = changeMatch[1];
+        const [, startLine, startColumn, endLine, endColumn] = changeMatch;
 
         const currentFile = errors.pop();
 
         if (currentFile) {
-          errors.push(currentFile.withLine(Number.parseInt(startLine)));
+          errors.push(
+            currentFile.withFailure(
+              Number.parseInt(startLine),
+              Number.parseInt(startColumn),
+              Number.parseInt(endLine),
+              Number.parseInt(endColumn),
+            ),
+          );
         }
       }
     });
