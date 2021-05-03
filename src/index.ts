@@ -1,4 +1,6 @@
 import * as core from '@actions/core';
+import * as os from 'os'
+
 import Scalafmt from './scalafmt';
 
 async function run() {
@@ -20,9 +22,13 @@ async function run() {
     .sort((a, b) => a.filename.localeCompare(b.filename))
     .forEach((group) => {
       group.failures.forEach((line) => {
-        core.setFailed(
-          `file=${group.filename},line=${line}::Incorrectly formatted line(s)`,
+        process.stdout.write(
+          `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
         );
+        //
+        // core.error(
+        //   `file=${group.filename},line=${line}::Incorrectly formatted line(s)`,
+        // );
       });
     });
 

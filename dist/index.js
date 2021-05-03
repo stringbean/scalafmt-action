@@ -4453,6 +4453,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: external "os"
+var external_os_ = __nccwpck_require__(2087);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(5747);
 var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
@@ -4461,8 +4463,6 @@ var external_path_ = __nccwpck_require__(5622);
 var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");;
-// EXTERNAL MODULE: external "os"
-var external_os_ = __nccwpck_require__(2087);
 ;// CONCATENATED MODULE: external "process"
 const external_process_namespaceObject = require("process");;
 ;// CONCATENATED MODULE: ./src/ScalafmtError.ts
@@ -4584,6 +4584,7 @@ class Scalafmt {
 ;// CONCATENATED MODULE: ./src/index.ts
 
 
+
 async function run() {
     const scalafmtVersion = core.getInput('version');
     const formatFiles = core.getInput('format-files') === 'true';
@@ -4596,7 +4597,11 @@ async function run() {
         .sort((a, b) => a.filename.localeCompare(b.filename))
         .forEach((group) => {
         group.failures.forEach((line) => {
-            core.setFailed(`file=${group.filename},line=${line}::Incorrectly formatted line(s)`);
+            process.stdout.write(`::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${external_os_.EOL}`);
+            //
+            // core.error(
+            //   `file=${group.filename},line=${line}::Incorrectly formatted line(s)`,
+            // );
         });
     });
     // if (results) {
