@@ -20,15 +20,15 @@ async function run() {
     .sort((a, b) => a.filename.localeCompare(b.filename))
     .forEach((group) => {
       group.failures.forEach((line) => {
-        core.error(
+        core.setFailed(
           `file=${group.filename},line=${line}::Incorrectly formatted line(s)`,
         );
       });
     });
 
-  if (results) {
-    core.setFailed('One or more files are not correctly formatted');
-  }
+  // if (results) {
+  //   core.setFailed('One or more files are not correctly formatted');
+  // }
 }
 
 run().catch((error) => {
