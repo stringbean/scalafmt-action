@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as os from 'os'
 
 import Scalafmt from './scalafmt';
+import {ExitCode} from "@actions/core";
 
 async function run() {
   const scalafmtVersion: string = core.getInput('version');
@@ -25,16 +26,12 @@ async function run() {
         process.stdout.write(
           `::error file=${group.filename},line=${line}::Incorrectly formatted line(s)${os.EOL}`,
         );
-        //
-        // core.error(
-        //   `file=${group.filename},line=${line}::Incorrectly formatted line(s)`,
-        // );
       });
     });
 
-  // if (results) {
-  //   core.setFailed('One or more files are not correctly formatted');
-  // }
+  if (results) {
+    process.exitCode = ExitCode.Failure
+  }
 }
 
 run().catch((error) => {
