@@ -17,13 +17,13 @@ export default class Scalafmt {
   private readonly workdir: string;
 
   constructor(version: string) {
+    this.workdir = env.GITHUB_WORKSPACE || process.cwd();
+
     if (version === 'auto' || version === '') {
       this.version = this.detectScalafmtVersion();
     } else {
       this.version = version;
     }
-
-    this.workdir = env.GITHUB_WORKSPACE || process.cwd();
   }
 
   async run(
@@ -74,12 +74,21 @@ export default class Scalafmt {
   }
 
   detectScalafmtVersion(): string {
-    const scalafmtConfig = fs.readFileSync('.scalafmt.conf', {
+    core.debug('Detecting scalafmt version...');
+
+    const configFile = path.join(this.workdir, '.scalafmt.conf');
+
+    if (!fs.existsSync(configFile)) {
+      throw new Error('Cannot find scalafmt config');
+    }
+
+    const scalafmtConfig = fs.readFileSync(configFile, {
       encoding: 'utf-8',
     });
     const versionMatch = scalafmtConfig.match(SCALAFMT_VERSION_PATTERN);
 
     if (versionMatch) {
+      core.info(`Detected scalafmt ${versionMatch[1]}`);
       return versionMatch[1];
     }
 

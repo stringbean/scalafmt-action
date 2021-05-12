@@ -4529,13 +4529,13 @@ var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
 const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*)['"]?$/m;
 class Scalafmt {
     constructor(version) {
+        this.workdir = external_process_namespaceObject.env.GITHUB_WORKSPACE || process.cwd();
         if (version === 'auto' || version === '') {
             this.version = this.detectScalafmtVersion();
         }
         else {
             this.version = version;
         }
-        this.workdir = external_process_namespaceObject.env.GITHUB_WORKSPACE || process.cwd();
     }
     async run(srcPath, useGitignore, reformat, branch) {
         if (!this.binPath) {
@@ -4572,11 +4572,17 @@ class Scalafmt {
         });
     }
     detectScalafmtVersion() {
-        const scalafmtConfig = external_fs_default().readFileSync('.scalafmt.conf', {
+        core.debug('Detecting scalafmt version...');
+        const configFile = external_path_default().join(this.workdir, '.scalafmt.conf');
+        if (!external_fs_default().existsSync(configFile)) {
+            throw new Error('Cannot find scalafmt config');
+        }
+        const scalafmtConfig = external_fs_default().readFileSync(configFile, {
             encoding: 'utf-8',
         });
         const versionMatch = scalafmtConfig.match(SCALAFMT_VERSION_PATTERN);
         if (versionMatch) {
+            core.info(`Detected scalafmt ${versionMatch[1]}`);
             return versionMatch[1];
         }
         throw new Error('Unknown scalafmt version');
