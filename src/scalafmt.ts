@@ -9,7 +9,7 @@ import { ScalafmtError } from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
 import fetch from 'node-fetch';
 
-const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*)['"]?$/m;
+const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*?)['"]?$/m;
 
 export default class Scalafmt {
   private readonly version: string;

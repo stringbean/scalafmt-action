@@ -4526,7 +4526,7 @@ var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
 
 
 
-const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*)['"]?$/m;
+const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*?)['"]?$/m;
 class Scalafmt {
     constructor(version) {
         this.workdir = external_process_namespaceObject.env.GITHUB_WORKSPACE || process.cwd();
