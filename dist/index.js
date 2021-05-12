@@ -4610,7 +4610,9 @@ async function run() {
     results
         .sort((a, b) => a.filename.localeCompare(b.filename))
         .forEach((error) => process.stdout.write(error.toString()));
+    console.log(">> results", results);
     if (results) {
+        console.warn('had errors');
         process.exitCode = core.ExitCode.Failure;
     }
 }
