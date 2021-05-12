@@ -4526,9 +4526,15 @@ var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
 
 
 
+const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*)['"]?$/m;
 class Scalafmt {
     constructor(version) {
-        this.version = version;
+        if (version === 'auto' || version === '') {
+            this.version = this.detectScalafmtVersion();
+        }
+        else {
+            this.version = version;
+        }
         this.workdir = external_process_namespaceObject.env.GITHUB_WORKSPACE || process.cwd();
     }
     async run(srcPath, useGitignore, reformat, branch) {
@@ -4565,10 +4571,23 @@ class Scalafmt {
             });
         });
     }
+    detectScalafmtVersion() {
+        const scalafmtConfig = external_fs_default().readFileSync('.scalafmt.conf', {
+            encoding: 'utf-8',
+        });
+        const versionMatch = scalafmtConfig.match(SCALAFMT_VERSION_PATTERN);
+        if (versionMatch) {
+            return versionMatch[1];
+        }
+        throw new Error('Unknown scalafmt version');
+    }
     async fetchScalafmt() {
         const filename = external_path_default().join((0,external_os_.homedir)(), `scalafmt-${this.version}`);
-        const response = await lib_default()(`https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`);
+        const url = `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`;
+        core.debug(`Fetching scalafmt from: ${url}`);
+        const response = await lib_default()(url);
         if (response.status != 200) {
+            core.error(`Failed to download scalafmt - status: ${response.status}`);
             throw new Error('Failed to download scalafmt');
         }
         return new Promise((resolve, reject) => {
