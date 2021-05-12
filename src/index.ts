@@ -31,5 +31,7 @@ async function run() {
 }
 
 run().catch((error) => {
+  core.error('Unexpected error running Scalafmt')
+  core.debug(error);
   core.setFailed(error);
 });

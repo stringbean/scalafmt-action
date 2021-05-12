@@ -4536,6 +4536,7 @@ class Scalafmt {
             core.info(`Fetching scalafmt ${this.version}`);
             this.binPath = await this.fetchScalafmt();
         }
+        core.debug('Fetched scalafmt');
         const args = [this.binPath, '--non-interactive', '--debug'];
         if (!reformat) {
             args.push('--test');
@@ -4617,6 +4618,8 @@ async function run() {
     }
 }
 run().catch((error) => {
+    core.error('Unexpected error running Scalafmt');
+    core.debug(error);
     core.setFailed(error);
 });
 

@@ -31,6 +31,8 @@ export default class Scalafmt {
       this.binPath = await this.fetchScalafmt();
     }
 
+    core.debug('Fetched scalafmt');
+
     const args = [this.binPath, '--non-interactive', '--debug'];
 
     if (!reformat) {
@@ -48,6 +50,8 @@ export default class Scalafmt {
     const opts = {
       cwd: path.join(this.workdir, srcPath),
     };
+
+
 
     return new Promise((resolve) => {
       core.debug(`Running scalafmt: ${args.join(' ')}`);
