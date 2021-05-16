@@ -9,12 +9,14 @@ async function run() {
   const compareBranch: string = core.getInput('compare-branch');
   const useGitignore: boolean = core.getInput('use-gitignore') === 'true';
   const path: string = core.getInput('path');
+  const githubToken = core.getInput('github-token');
 
   const scalafmt = new Scalafmt(scalafmtVersion);
   const results = await scalafmt.run(
     path,
     useGitignore,
     formatFiles,
+    githubToken,
     compareBranch,
   );
 

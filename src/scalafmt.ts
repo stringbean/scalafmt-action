@@ -8,6 +8,7 @@ import * as core from '@actions/core';
 import { ScalafmtError } from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
 import fetch from 'node-fetch';
+import PrUtils from './PrUtils';
 
 const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*?)['"]?$/m;
 
@@ -27,6 +28,38 @@ export default class Scalafmt {
   }
 
   async run(
+    srcPath: string,
+    useGitignore: boolean,
+    reformat: boolean,
+    githubToken: string,
+    branch?: string,
+  ): Promise<ScalafmtError[]> {
+    const errors = await this.runScalafmt(
+      srcPath,
+      useGitignore,
+      reformat,
+      branch,
+    );
+
+    if (errors.length === 0) {
+      return [];
+    }
+
+    try {
+      const changedFiles = await PrUtils.listChangedFiles(githubToken);
+
+      return errors.filter((error) => changedFiles.includes(error.filename));
+    } catch (e) {
+      core.warning(
+        'Failed to list PR changed files - results will not be filtered',
+      );
+      core.debug(e);
+
+      return errors;
+    }
+  }
+
+  private async runScalafmt(
     srcPath: string,
     useGitignore: boolean,
     reformat: boolean,
@@ -73,7 +106,7 @@ export default class Scalafmt {
     });
   }
 
-  detectScalafmtVersion(): string {
+  private detectScalafmtVersion(): string {
     core.debug('Detecting scalafmt version...');
 
     const configFile = path.join(this.workdir, '.scalafmt.conf');
@@ -95,7 +128,7 @@ export default class Scalafmt {
     throw new Error('Unknown scalafmt version');
   }
 
-  async fetchScalafmt(): Promise<string> {
+  private async fetchScalafmt(): Promise<string> {
     const filename = path.join(homedir(), `scalafmt-${this.version}`);
     const url = `https://github.com/scalameta/scalafmt/releases/download/v${this.version}/scalafmt-linux-musl`;
 
