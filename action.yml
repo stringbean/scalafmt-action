@@ -25,6 +25,10 @@ inputs:
     description: Path(s) to scan
     default: .
     required: false
+  github-token:
+    description: GitHub access token to access the repo (will be autodetected if not supplied)
+    default: ${{github.token}}
+    required: false
 
 runs:
   using: node12
