@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 
-import Scalafmt from './scalafmt';
+import Scalafmt from './Scalafmt';
 import { ExitCode } from '@actions/core';
 
 async function run() {

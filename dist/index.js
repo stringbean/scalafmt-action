@@ -8408,7 +8408,7 @@ class PrUtils {
     }
 }
 
-;// CONCATENATED MODULE: ./src/scalafmt.ts
+;// CONCATENATED MODULE: ./src/Scalafmt.ts
 
 
 
