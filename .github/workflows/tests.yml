@@ -6,21 +6,23 @@ on:
       - main
 
 jobs:
-  integration_tests:
+  tests:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version:
+          - 12
+          - 14
+
     steps:
       - uses: actions/checkout@v2
-      - id: branch-name
-        uses: tj-actions/branch-names@v2.2
-      - name: Checkout branches
-        # only fetch the head commits of our branch & diff-branch
-        run: |
-          git remote set-branches origin diff-branch "${{steps.branch-name.outputs.current_branch}}"
-          git fetch --depth 1
-          git fetch origin diff-branch:diff-branch
-          git checkout "${{steps.branch-name.outputs.current_branch}}"
-      - uses: ./
+      - name: Node.js ${{matrix.node-version}}
+        uses: actions/setup-node@v1
         with:
-          version: 2.7.5
-          path: integration-test
-          compare-branch: diff-branch
+          node-version: ${{matrix.node-version}}
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run lint
