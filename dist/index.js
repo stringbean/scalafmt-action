@@ -8474,7 +8474,11 @@ class Scalafmt {
                 else {
                     // parse errors from stderr
                     core.debug('Scalafmt errors detected');
-                    resolve(ScalafmtError.parseErrors(stderr, this.workdir));
+                    const errors = ScalafmtError.parseErrors(stderr, this.workdir);
+                    if (!errors.length) {
+                        core.warning(`Scalafmt returned non-zero exit code (${error.code}) but did not output any errors`);
+                    }
+                    resolve(errors);
                 }
             });
         });
