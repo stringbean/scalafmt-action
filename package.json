@@ -7,6 +7,7 @@
     "package": "ncc build --source-map --license licenses.txt src/index.ts",
     "prettier": "prettier --write .",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "eslint src"
   },
   "license": "Apache-2.0",
