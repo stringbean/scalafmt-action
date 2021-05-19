@@ -25,7 +25,10 @@ async function run() {
     .forEach((error) => process.stdout.write(error.toString()));
 
   if (results.length) {
+    core.error(`${results.length} scalafmt errors detected`);
     process.exitCode = ExitCode.Failure;
+  } else {
+    core.info('scalafmt check passed');
   }
 }
 
