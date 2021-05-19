@@ -1,4 +1,4 @@
-import {ScalafmtError} from "../src/ScalafmtError";
+import { ScalafmtError } from '../src/ScalafmtError';
 
 describe('ScalafmtError.parseErrors', () => {
   test('parses empty string', () => {

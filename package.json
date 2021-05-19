@@ -8,7 +8,7 @@
     "prettier": "prettier --write .",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src"
+    "lint": "eslint src tests"
   },
   "license": "Apache-2.0",
   "dependencies": {
