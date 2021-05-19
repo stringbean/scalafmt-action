@@ -1,6 +1,6 @@
 {
   "name": "scalafmt-action",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-beta",
   "description": "GitHub Action for checking Scala source files are correctly formatted using scalafmt",
   "scripts": {
     "build": "tsc --noEmit",
