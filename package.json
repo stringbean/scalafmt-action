@@ -2,6 +2,8 @@
   "name": "scalafmt-action",
   "version": "2.0.0-beta",
   "description": "GitHub Action for checking Scala source files are correctly formatted using scalafmt",
+  "private": true,
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc --noEmit",
     "package": "ncc build --source-map --license licenses.txt src/index.ts",
