@@ -5,8 +5,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc --noEmit",
-    "package": "ncc build --source-map --license licenses.txt src/index.ts",
+    "build": "ncc build src/index.ts",
     "prettier": "prettier --write .",
     "test": "jest",
     "test:coverage": "jest --coverage",
