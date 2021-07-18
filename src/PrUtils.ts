@@ -16,7 +16,7 @@ export default class PrUtils {
       throw new Error('cannot determine pull request');
     }
 
-    const changedFiles = await client.paginate(client.pulls.listFiles, {
+    const changedFiles = await client.paginate(client.rest.pulls.listFiles, {
       owner: repo.owner.login,
       repo: repo.name,
       pull_number,

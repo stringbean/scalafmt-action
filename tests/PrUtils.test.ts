@@ -13,9 +13,11 @@ beforeEach(() => {
   getOctokitMocked.mockReturnValue({
     // @ts-ignore
     paginate: paginate,
-    pulls: {
-      // @ts-ignore
-      listFiles: 'list',
+    rest: {
+      pulls: {
+        // @ts-ignore
+        listFiles: 'list',
+      },
     },
   });
 });
