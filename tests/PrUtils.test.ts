@@ -2,11 +2,10 @@
 
 import PrUtils from '../src/PrUtils';
 import { context, getOctokit } from '@actions/github';
-import { mocked } from 'ts-jest/utils';
 
 jest.mock('@actions/github');
 
-const getOctokitMocked = mocked(getOctokit);
+const getOctokitMocked = jest.mocked(getOctokit);
 const paginate = jest.fn();
 
 beforeEach(() => {
