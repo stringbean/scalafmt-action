@@ -1,4 +1,4 @@
-name: Scalafmt
+name: Scala Code Format
 description: Format Scala source files with Scalafmt
 
 branding:
