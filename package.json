@@ -1,6 +1,6 @@
 {
   "name": "scalafmt-action",
-  "version": "2.0.0-beta",
+  "version": "2.0.1",
   "description": "GitHub Action for checking Scala source files are correctly formatted using scalafmt",
   "private": true,
   "main": "dist/index.js",
