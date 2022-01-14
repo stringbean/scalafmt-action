@@ -53,7 +53,10 @@ export default class Scalafmt {
       core.warning(
         'Failed to list PR changed files - results will not be filtered',
       );
-      core.debug(e);
+
+      if (e instanceof Error) {
+        core.debug(e.message);
+      }
 
       return errors;
     }
