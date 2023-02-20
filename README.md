@@ -28,7 +28,7 @@ jobs:
     name: Scalafmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Checkout branches
         run: |
@@ -41,6 +41,10 @@ jobs:
           use-gitignore: true
           compare-branch: 'origin/${{github.base_ref}}'
 ```
+
+> **Note**
+> You _must_ include `origin/` in the `compare-branch` if you are performing a partial fetch otherwise
+> scalafmt will not find the branch.
 
 ## Options
 
