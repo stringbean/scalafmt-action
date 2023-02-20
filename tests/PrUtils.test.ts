@@ -28,7 +28,7 @@ describe('listChangedFiles', () => {
     paginate.mockResolvedValue([
       { filename: 'added1.scala', status: 'added' },
       { filename: 'updated1.scala', status: 'changed' },
-      { filename: 'deleted1.scala', status: 'deleted' },
+      { filename: 'deleted1.scala', status: 'removed' },
       { filename: 'updated2.scala', status: 'updated' },
       { filename: 'added2.scala', status: 'added' },
     ]);
