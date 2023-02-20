@@ -23,7 +23,7 @@ export default class PrUtils {
     });
 
     return changedFiles
-      .filter((f) => f.status !== 'deleted')
+      .filter((f) => f.status !== 'removed')
       .map((f) => f.filename);
   }
 }
