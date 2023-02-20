@@ -96,6 +96,10 @@ export default class Scalafmt {
       core.debug(`Running scalafmt: ${args.join(' ')}`);
 
       exec(args.join(' '), opts, (error, stdout, stderr) => {
+        core.debug(`Scalafmt status: ${error}`);
+        core.debug(`stdout:\n${stdout}`);
+        core.debug(`stderr:\n${stderr}`);
+
         if (!error) {
           // no format errors
           core.debug('Scalafmt passed');
