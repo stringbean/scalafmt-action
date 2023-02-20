@@ -11,7 +11,7 @@ Add a job that calls the action:
 jobs:
   lint:
     steps:
-      - uses: stringbean/scalafmt-action@v2
+      - uses: stringbean/scalafmt-action@v3
         with:
           compare-branch: main
 ```
@@ -36,7 +36,7 @@ jobs:
           git fetch --depth 1
           git checkout "${{github.head_ref}}"
 
-      - uses: stringbean/scalafmt-action@v2
+      - uses: stringbean/scalafmt-action@v3
         with:
           use-gitignore: true
           compare-branch: 'origin/${{github.base_ref}}'
