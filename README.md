@@ -57,6 +57,6 @@ jobs:
 | `path`           | Path to Scala sources to scan.                                                                 | `.` (repo root dir) |
 | `github-token`   | GitHub access token to fetch changed files using.                                              | (autodetected)      |
 
-:warning: **Note:** This action uses the native version of scalafmt which cannot switch versions at
-runtime. The version specified in the action _must_ match the one in `.scalafmt.conf` or the action
-will fail.
+> **Warning**
+> This action uses the native version of scalafmt which cannot switch versions at runtime. The
+> version specified in the action _must_ match the one in `.scalafmt.conf` or the action will fail.
