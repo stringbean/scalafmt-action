@@ -162,25 +162,29 @@ export default class Scalafmt {
 
       const dest = fs.createWriteStream(filename);
 
-      response.body.on('data', (chunk) => {
-        progress.increment(chunk.length);
-      });
-
-      response.body.pipe(dest);
-
-      response.body.on('error', (error) => {
-        dest.close();
-        fs.unlink(filename, () => {
-          core.warning('Failed to cleanup target file');
+      if (response.body) {
+        response.body.on('data', (chunk) => {
+          progress.increment(chunk.length);
         });
-        reject(error);
-      });
 
-      dest.on('finish', () => {
-        fs.chmodSync(filename, 0x755);
-        progress.stop();
-        resolve(filename);
-      });
+        response.body.pipe(dest);
+
+        response.body.on('error', (error) => {
+          dest.close();
+          fs.unlink(filename, () => {
+            core.warning('Failed to cleanup target file');
+          });
+          reject(error);
+        });
+
+        dest.on('finish', () => {
+          fs.chmodSync(filename, 0x755);
+          progress.stop();
+          resolve(filename);
+        });
+      } else {
+        reject(new Error('Empty response received when fetching scalafmt'));
+      }
     });
   }
 }
