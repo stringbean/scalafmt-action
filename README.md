@@ -53,7 +53,7 @@ jobs:
 | `version`        | Version of scalafmt to run with - if `auto` then the version in `.scalafmt.conf` will be used. | `auto`              |
 | `format-files`   | If `true` then the code will be reformatted instead of checked.                                | `false`             |
 | `compare-branch` | Name of a branch to compare differences to. If set then only changed files will be scanned.    | _none_              |
-| `use-gitignore`  | Whether scalafmt should read the `.gitignore` file.                                            | `true`              |
+| `use-gitignore`  | Whether scalafmt should read the `.gitignore` file (only supported for scalafmt 2.x).          | `true`              |
 | `path`           | Path to Scala sources to scan.                                                                 | `.` (repo root dir) |
 | `github-token`   | GitHub access token to fetch changed files using.                                              | (autodetected)      |
 

@@ -9,6 +9,7 @@ import { ScalafmtError } from './ScalafmtError';
 import { SingleBar } from 'cli-progress';
 import fetch from 'node-fetch';
 import PrUtils from './PrUtils';
+import * as semver from 'semver';
 
 const SCALAFMT_VERSION_PATTERN = /^ *version *[:=] *['"]?(.*?)['"]?$/m;
 
@@ -80,7 +81,8 @@ export default class Scalafmt {
       args.push('--test');
     }
 
-    if (useGitignore) {
+    // git flag was removed in scalafmt 3
+    if (useGitignore && semver.lt(this.version, '3.0.0')) {
       args.push('--git', 'true');
     }
 

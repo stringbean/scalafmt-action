@@ -15,7 +15,8 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "cli-progress": "^3.9.0",
-    "node-fetch": "^3.3.0"
+    "node-fetch": "^3.3.0",
+    "semver": "^7.3.8"
   },
   "devDependencies": {
     "@actions/github": "^5.0.0",
@@ -23,6 +24,7 @@
     "@types/cli-progress": "^3.9.1",
     "@types/jest": "^29.4.0",
     "@types/node": "^16.18.12",
+    "@types/semver": "^7.3.13",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "@typescript-eslint/parser": "^5.9.1",
     "@vercel/ncc": "^0.36.1",
